@@ -1,0 +1,105 @@
+
+#Q1
+#a)
+eurostatdata <- read.csv('EurostatCrime2015.csv', row.names = 1);
+#str(eurostatdata)
+#i)
+colnames(eurostatdata[which.max(eurostatdata["Ireland",])])
+colnames(eurostatdata[which.min(eurostatdata["Ireland",])])
+
+#b)
+
+#cor(var(eurostatdata,na.rm = TRUE))
+var(eurostatdata,na.rm = TRUE)
+
+cor(eurostatdata,use = "complete.obs")
+#Without this NA is printed wherever NA is found in calculation
+# with use NA are ignored
+
+#c)
+sum<-eurostatdata$Rape + eurostatdata$Sexual.assault + eurostatdata$Sexual.violence
+eurostatdata <- cbind(eurostatdata, "Sex.Crime"=sum)
+
+eurostatdata <- cbind(eurostatdata, "Sex.Crime"= eurostatdata$Rape + eurostatdata$Sexual.assault + eurostatdata$Sexual.violence)
+
+eurostatdata$Sex.Crime
+eurostatdata <- eurostatdata[-c(3,5,6)]
+
+#To drop colums 1st way
+eurostatdata$Rape <- NULL
+eurostatdata$Sexual.assault <- NULL
+eurostatdata$Sexual.violence <- NULL
+
+#To drop columns 2nd way
+drops <- c("Rape","Sexual.assault","Sexual.violence")
+eurostatdata <- eurostatdata[ , !(names(eurostatdata) %in% drops)]
+
+
+#d
+#listing non complete
+row.names(eurostatdata[!complete.cases(eurostatdata),])
+
+#Dropping non complete
+eurostatdata <- eurostatdata[complete.cases(eurostatdata),]
+
+str(eurostatdata)
+eurostatdata2008 <- read.csv('EurostatCrime2008.csv', row.names = 1);
+str(eurostatdata2008)
+
+
+#e
+e08 <- read.csv('EurostatCrime2008.csv', row.names = 1);
+e09 <- read.csv('EurostatCrime2009.csv', row.names = 1);
+e10 <- read.csv('EurostatCrime2010.csv', row.names = 1);
+e11 <- read.csv('EurostatCrime2011.csv', row.names = 1);
+e12 <- read.csv('EurostatCrime2012.csv', row.names = 1);
+e13 <- read.csv('EurostatCrime2013.csv', row.names = 1);
+e14 <- read.csv('EurostatCrime2014.csv', row.names = 1);
+e15 <- read.csv('EurostatCrime2015.csv', row.names = 1);
+
+e08 <- data.matrix(e08, rownames.force = NA)
+e09 <- data.matrix(e09, rownames.force = NA)
+e10 <- data.matrix(e10, rownames.force = NA)
+e11 <- data.matrix(e11, rownames.force = NA)
+e12 <- data.matrix(e12, rownames.force = NA)
+e13 <- data.matrix(e13, rownames.force = NA)
+e14 <- data.matrix(e14, rownames.force = NA)
+e15 <- data.matrix(e15, rownames.force = NA)
+
+
+eurostatdataAll <- array(data = c(e08, e09,
+                                  e10,e11,e12,e13,
+                                  e14,e15), dim = c(41, 7, 8))
+
+sums = NULL;
+years = NULL;
+index=1;
+for (year in 2008:2015)
+{
+  sums <- c(sums,sum(eurostatdataAll[,7,index],na.rm = TRUE))
+  years <- c(years,year)
+  index=index+1;
+}
+sum(eurostatdataAll[,7,1],na.rm = TRUE)
+
+plot(years,sums,main="Total Thefts year wise",
+     xlab="Years",ylab="Number of thefts")
+text(years+.1,sums-1000, round(sums, 2), cex=0.8)
+
+barplot(sums,years, main="Total Thefts year wise", 
+        col=c('red','blue','green','yellow'),
+        xlab="Years",ylab="Number of thefts",names.arg = years)
+
+
+#################################################
+# Q2
+wines <- read.csv('wines.csv', row.names = 1);
+
+plot(wines)
+
+pairs(wines)
+
+linearMod <- lm(Tasting ~ View, data=wines)  # build linear regression model on full data
+print(linearMod)
+summary(linearMod)
+
